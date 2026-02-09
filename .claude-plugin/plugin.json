@@ -5,9 +5,8 @@
   "author": {
     "name": "Tomer Ariel"
   },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tomerariel/claude-just"
-  },
-  "license": "MIT"
+  "homepage": "https://github.com/tomerariel/claude-just",
+  "repository": "https://github.com/tomerariel/claude-just.git",
+  "license": "MIT",
+  "keywords": ["just", "justfile", "task-runner", "automation", "claude-code"]
 }

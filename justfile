@@ -12,9 +12,25 @@ tokens:
 preview skill:
     @cat skills/{{ skill }}/SKILL.md && echo "\n---\n" && cat {{ ref }}
 
-# validate plugin.json is well-formed
+# validate plugin.json structure and required marketplace fields
 check-plugin:
-    @jq empty .claude-plugin/plugin.json && echo 'plugin.json: ok'
+    @jq -e '.name // empty' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: missing "name"' >&2; exit 1; }
+    @jq -e '.description // empty' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: missing "description"' >&2; exit 1; }
+    @jq -e '.version // empty | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: "version" missing or not semver (x.y.z)' >&2; exit 1; }
+    @jq -e '.author.name // empty' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: missing "author.name"' >&2; exit 1; }
+    @jq -e '.license // empty' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: missing "license"' >&2; exit 1; }
+    @jq -e '.keywords // empty | if type == "array" and length > 0 then true else false end' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: "keywords" missing or not a non-empty array' >&2; exit 1; }
+    @jq -e '.homepage // empty' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: missing "homepage"' >&2; exit 1; }
+    @jq -e '.repository // empty' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: missing "repository"' >&2; exit 1; }
+    @echo 'plugin.json: ok'
 
 # print the official just manual URL for cross-referencing
 docs:
