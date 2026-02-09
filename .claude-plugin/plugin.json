@@ -1,13 +1,7 @@
 {
   "name": "just",
   "description": "Generate well-structured justfiles with best practices and idiomatic patterns",
-  "version": "1.0.0",
   "author": {
     "name": "Tomer Ariel"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/tomerariel/claude-just"
-  },
-  "license": "MIT"
+  }
 }
