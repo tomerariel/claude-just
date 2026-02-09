@@ -19,3 +19,20 @@ check-plugin:
 # print the official just manual URL for cross-referencing
 docs:
     @echo 'https://just.systems/man/en/'
+
+# bump plugin version — just bump major|minor|patch
+bump part:
+    @current=$(jq -r .version .claude-plugin/plugin.json) && \
+    major=$(echo "$current" | cut -d. -f1) && \
+    minor=$(echo "$current" | cut -d. -f2) && \
+    patch=$(echo "$current" | cut -d. -f3) && \
+    case "{{part}}" in \
+        major) major=$((major + 1)); minor=0; patch=0 ;; \
+        minor) minor=$((minor + 1)); patch=0 ;; \
+        patch) patch=$((patch + 1)) ;; \
+        *) echo "error: unknown part '{{part}}' — use major, minor, or patch" >&2; exit 1 ;; \
+    esac && \
+    new="$major.$minor.$patch" && \
+    jq --arg v "$new" '.version = $v' .claude-plugin/plugin.json > .claude-plugin/plugin.tmp.json && \
+    mv .claude-plugin/plugin.tmp.json .claude-plugin/plugin.json && \
+    echo "$current → $new"
