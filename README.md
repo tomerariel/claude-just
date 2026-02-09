@@ -6,10 +6,10 @@ A Claude Code plugin that generates well-structured, idiomatic [justfiles](https
 
 ```bash
 # from the marketplace
-claude /plugin marketplace add tomerariel/just
+claude /plugin marketplace add tomerariel/claude-just
 
 # then install it
-claude /plugin install just@tomerariel-just
+claude /plugin install just@tomerariel-claude-just
 ```
 
 ## Skills
