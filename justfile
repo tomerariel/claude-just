@@ -20,6 +20,8 @@ check-plugin:
         || { echo 'error: plugin.json missing "description"' >&2; exit 1; }
     @jq -e '.author.name // empty' .claude-plugin/plugin.json > /dev/null \
         || { echo 'error: plugin.json missing "author.name"' >&2; exit 1; }
+    @jq -e '.version // empty | test("^[0-9]+\\.[0-9]+\\.[0-9]+$")' .claude-plugin/plugin.json > /dev/null \
+        || { echo 'error: plugin.json missing "version" or not semver (x.y.z)' >&2; exit 1; }
     @jq -e '.name // empty' .claude-plugin/marketplace.json > /dev/null \
         || { echo 'error: marketplace.json missing "name"' >&2; exit 1; }
     @jq -e '.owner.name // empty' .claude-plugin/marketplace.json > /dev/null \
@@ -50,4 +52,6 @@ bump part:
     new="$major.$minor.$patch" && \
     jq --arg v "$new" '.plugins[0].version = $v' .claude-plugin/marketplace.json > .claude-plugin/marketplace.tmp.json && \
     mv .claude-plugin/marketplace.tmp.json .claude-plugin/marketplace.json && \
+    jq --arg v "$new" '.version = $v' .claude-plugin/plugin.json > .claude-plugin/plugin.tmp.json && \
+    mv .claude-plugin/plugin.tmp.json .claude-plugin/plugin.json && \
     echo "$current → $new"
