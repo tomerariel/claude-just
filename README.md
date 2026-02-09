@@ -41,7 +41,7 @@ Adds a recipe (or small group of related recipes) to your existing justfile, res
 
 - **`/just:new`** — generate a new justfile from a project description or by analyzing the current codebase
 - **`/just:add`** — add a recipe to an existing justfile, or create a minimal one if none exists
-- **`reference.md`** — comprehensive `just` syntax reference that Claude can consult for accurate, up-to-date syntax
+- **`reference.md`** — `just` syntax quick reference that Claude can consult for accurate, up-to-date syntax (based on the [official manual](https://just.systems/man/en/))
 
 ## Tip: Make Agents Aware
 
