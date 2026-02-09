@@ -8,7 +8,7 @@ argument-hint: "<task to automate>"
 
 Add a recipe (or small group of related recipes) to the project's `justfile` based on `$ARGUMENTS`.
 
-For detailed syntax and built-in functions, see [reference.md](../new/reference.md).
+For detailed syntax and built-in functions, see [reference.md](../../reference.md).
 
 ## Workflow
 

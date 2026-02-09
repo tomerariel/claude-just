@@ -9,7 +9,7 @@ argument-hint: "[project description or recipe needs]"
 Generate a complete, idiomatic `justfile` for the project described in `$ARGUMENTS`.
 If no arguments, analyze the current project and generate an appropriate justfile.
 
-For detailed syntax and built-in functions, see [reference.md](reference.md).
+For detailed syntax and built-in functions, see [reference.md](../../reference.md).
 
 ## Output Requirements
 
@@ -17,6 +17,7 @@ For detailed syntax and built-in functions, see [reference.md](reference.md).
 - Include doc comments on every public recipe (shown in `just --list`)
 - Use `@` prefix on echo/printf lines to avoid double-printing
 - Quote `{{…}}` substitutions containing spaces
+- After writing the justfile, suggest: *"Consider adding to your project's CLAUDE.md or AGENTS.md: `use just for common automation — run just to see available recipes.`"*
 
 ## Structure Convention
 

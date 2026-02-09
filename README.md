@@ -43,6 +43,16 @@ Adds a recipe (or small group of related recipes) to your existing justfile, res
 - **`/just:add`** — add a recipe to an existing justfile, or create a minimal one if none exists
 - **`reference.md`** — comprehensive `just` syntax reference that Claude can consult for accurate, up-to-date syntax
 
+## Tip: Make Agents Aware
+
+After generating a justfile, consider adding this to your project's `CLAUDE.md` or `AGENTS.md`:
+
+```
+use `just` for common automation — run `just` to see available recipes.
+```
+
+This ensures AI agents know to use `just` instead of raw shell commands or other task runners.
+
 ## License
 
 MIT
