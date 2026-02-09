@@ -12,7 +12,9 @@ claude /plugin marketplace add tomerariel/just
 claude /plugin install just@tomerariel-just
 ```
 
-## Usage
+## Skills
+
+### `/just:new` — generate a complete justfile
 
 ```
 /just:new python web api with fastapi
@@ -22,18 +24,23 @@ claude /plugin install just@tomerariel-just
 /just:new            # auto-detect from current project
 ```
 
-The skill generates a complete `justfile` with:
+Generates a full, project-aware justfile with sensible defaults, doc comments, grouped recipes, OS-specific recipes, and common patterns for your stack.
 
-- sensible defaults and structure conventions
-- doc comments on every recipe (visible in `just --list`)
-- grouped recipes for larger projects
-- OS-specific recipes where appropriate
-- private helper recipes
-- common patterns for your stack (docker, db, ci/cd, etc.)
+### `/just:add` — add a recipe to an existing justfile
+
+```
+/just:add run database migrations
+/just:add lint and format code
+/just:add deploy to staging with docker
+/just:add           # describe what you want to automate
+```
+
+Adds a recipe (or small group of related recipes) to your existing justfile, respecting its structure and style. Creates a minimal justfile if none exists.
 
 ## What's Included
 
 - **`/just:new`** — generate a new justfile from a project description or by analyzing the current codebase
+- **`/just:add`** — add a recipe to an existing justfile, or create a minimal one if none exists
 - **`reference.md`** — comprehensive `just` syntax reference that Claude can consult for accurate, up-to-date syntax
 
 ## License
