@@ -1,12 +1,7 @@
 {
   "name": "just",
   "description": "Generate well-structured justfiles with best practices and idiomatic patterns",
-  "version": "1.0.0",
   "author": {
     "name": "Tomer Ariel"
-  },
-  "homepage": "https://github.com/tomerariel/claude-just",
-  "repository": "https://github.com/tomerariel/claude-just.git",
-  "license": "MIT",
-  "keywords": ["just", "justfile", "task-runner", "automation", "claude-code"]
+  }
 }

@@ -1,0 +1,17 @@
+{
+  "name": "just-marketplace",
+  "owner": {
+    "name": "Tomer Ariel"
+  },
+  "metadata": {
+    "description": "Generate well-structured justfiles with best practices and idiomatic patterns"
+  },
+  "plugins": [
+    {
+      "name": "just",
+      "source": "./",
+      "description": "Generate well-structured justfiles with best practices and idiomatic patterns",
+      "version": "1.0.0"
+    }
+  ]
+}
