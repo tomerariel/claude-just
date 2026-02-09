@@ -1,6 +1,6 @@
-# Just Syntax Reference
+# Just Syntax Quick Reference
 
-Comprehensive reference for `just` syntax. See https://just.systems/man/en/ for the full manual.
+Reference for `just` syntax covering settings, variables, recipes, attributes, functions, and common patterns. See https://just.systems/man/en/ for the full manual.
 
 ## Settings
 
@@ -22,6 +22,8 @@ set unstable                          # enable unstable features
 set tempdir := '/tmp/just'            # custom temp dir for scripts
 set working-directory := 'subdir'     # override working directory
 set script-interpreter := ['uv', 'run', '--script']  # for [script] recipes
+set allow-duplicate-recipes           # later recipes override earlier ones
+set allow-duplicate-variables         # later variables override earlier ones
 set windows-shell := ["powershell.exe", "-NoLogo", "-Command"]
 ```
 
@@ -148,13 +150,15 @@ recipe:
 [macos]                      # only run on macos
 [unix]                       # only run on unix (includes macos)
 [windows]                    # only run on windows
+[openbsd]                    # only run on OpenBSD (1.38+)
 [script]                     # run as script (uses script-interpreter)
 [script('python3')]          # run as script with specific interpreter
 [extension('.py')]           # set script file extension
 [positional-arguments]       # per-recipe positional args
 [default]                    # use as module's default recipe
-[working-directory: 'sub']   # per-recipe working dir
+[working-directory('sub')]   # per-recipe working dir
 [parallel]                   # run dependencies in parallel
+[metadata('key', 'value')]   # arbitrary metadata (1.42+, unstable)
 
 # multiple attributes
 [no-cd, private, group('internal')]
@@ -162,7 +166,7 @@ helper:
     echo "hidden helper"
 ```
 
-### Argument Attributes (1.45+)
+### Argument Attributes (1.45+; `long`, `short`, `help`, `value` require 1.46+)
 ```just
 [arg('n', pattern='\d+')]               # validate with regex
 [arg('bar', long="bar")]                # --bar option
@@ -208,6 +212,7 @@ arch()          # "x86_64", "aarch64", etc.
 os()            # "linux", "macos", "windows", etc.
 os_family()     # "unix" or "windows"
 num_cpus()      # number of logical CPUs
+is_dependency() # "true" if running as a dependency
 ```
 
 ### Environment
@@ -246,15 +251,40 @@ join("a", "b", "c")          # "a/b/c" (uses OS separator)
 ```just
 uppercase("foo")             # "FOO"
 lowercase("BAR")             # "bar"
+capitalize("hello")          # "Hello"
+titlecase("hello world")     # "Hello World"
+kebabcase("fooBar")          # "foo-bar"
+snakecase("fooBar")          # "foo_bar"
+shoutysnakecase("fooBar")    # "FOO_BAR"
+shoutykebabcase("fooBar")    # "FOO-BAR"
+lowercamelcase("foo-bar")    # "fooBar"
+uppercamelcase("foo-bar")    # "FooBar"
 trim("  hi  ")               # "hi"
 trim_start("  hi")           # "hi"
 trim_end("hi  ")             # "hi"
+trim_start_match("foobar", "foo")   # "bar"
+trim_start_matches("aaab", "a")     # "b"
+trim_end_match("foobar", "bar")     # "foo"
+trim_end_matches("baaa", "a")       # "b"
+append("foo", "/bar")        # "foo/bar"
+prepend("bar", "foo/")       # "foo/bar"
 replace("aab", "a", "x")    # "xxb"
 replace_regex("foo123", '\d+', "N")  # "fooN"
 quote("it's")                # "'it'\\''s'"
-kebabcase("fooBar")          # "foo-bar"
-snakecase("fooBar")          # "foo_bar"
-capitalize("hello")          # "Hello"
+encode_uri_component("a b")  # "a%20b"
+```
+
+### Hashing
+```just
+sha256("string")             # SHA-256 hash of string
+sha256_file("path")          # SHA-256 hash of file
+blake3("string")             # BLAKE3 hash of string
+blake3_file("path")          # BLAKE3 hash of file
+```
+
+### Semver
+```just
+semver_matches("1.2.3", ">=1.0.0")  # "true" or "false"
 ```
 
 ### Filesystem
@@ -266,10 +296,8 @@ read("version.txt")         # file contents as string
 ### Other
 ```just
 error("something broke")    # abort with message
-uuid()                      # random UUID v4
-sha256("string")             # SHA-256 hash
-blake3("string")             # BLAKE3 hash
-sha256_file("path")          # hash of file
+assert(cond, "msg")          # abort if condition is false (unstable)
+uuid()                       # random UUID v4
 choose('16', HEX)            # random hex string
 datetime("%Y-%m-%d")         # local datetime
 datetime_utc("%H:%M:%S")    # UTC datetime
@@ -278,17 +306,26 @@ just_pid()                   # PID of just process
 require("node")              # full path or error
 which("node")                # full path or "" (unstable)
 shell('echo $1', 'arg')      # run command, return stdout
+style("bold")                # ANSI style code (unstable)
 ```
 
-### Useful Constants
+### Constants
 ```just
 HEX           # "0123456789abcdef"
+HEXLOWER      # same as HEX
 HEXUPPER      # "0123456789ABCDEF"
-PATH_SEP      # "/" or "\" on windows
+PATH_SEP      # "/" or "\" on Windows
+PATH_VAR_SEP  # ":" or ";" on Windows
+CLEAR         # "\ec" — clear terminal
 BOLD          # "\e[1m"
+ITALIC        # "\e[3m"
+UNDERLINE     # "\e[4m"
+INVERT        # "\e[7m"
+HIDE          # "\e[8m"
+STRIKETHROUGH # "\e[9m"
 NORMAL        # "\e[0m"
-RED, GREEN, YELLOW, BLUE, CYAN, MAGENTA, WHITE, BLACK  # foreground colors
-BG_RED, BG_GREEN, BG_YELLOW, BG_BLUE  # background colors
+BLACK, RED, GREEN, YELLOW, BLUE, MAGENTA, CYAN, WHITE   # foreground
+BG_BLACK, BG_RED, BG_GREEN, BG_YELLOW, BG_BLUE, BG_MAGENTA, BG_CYAN, BG_WHITE  # background
 ```
 
 ## Modules and Imports
@@ -326,4 +363,103 @@ Invoke module recipes: `just docker build` or `just docker::build`
 alias b := build
 alias t := test
 alias d := docker::build   # alias to module recipe
+```
+
+## Common Recipe Patterns
+
+### Docker
+```just
+# build the docker image
+docker-build tag='latest':
+    docker build -t myapp:{{tag}} .
+
+# run the container locally
+docker-run tag='latest' *FLAGS:
+    docker run --rm -it {{FLAGS}} myapp:{{tag}}
+```
+
+### Database
+```just
+# run pending migrations
+db-migrate:
+    @echo "Running migrations..."
+    ./manage.py migrate
+
+# open a database shell
+db-shell:
+    psql "$DATABASE_URL"
+```
+
+### CI/CD
+```just
+# run the full CI pipeline locally
+ci: lint test build
+
+# format, lint, and fix
+fix:
+    @just fmt
+    @just lint --fix
+```
+
+### Python
+```just
+# create/activate venv and install deps
+setup:
+    [ -d .venv ] || python3 -m venv .venv
+    .venv/bin/pip install -r requirements.txt
+
+# run with the venv python
+run *ARGS:
+    .venv/bin/python main.py {{ARGS}}
+```
+
+### Node.js
+```just
+# install dependencies
+setup:
+    npm ci
+
+# start dev server with hot reload
+dev:
+    npm run dev
+
+# build for production
+build:
+    npm run build
+
+# run tests in watch mode
+test-watch:
+    npm test -- --watch
+```
+
+### Go
+```just
+# build the binary
+build:
+    go build -o bin/app ./cmd/app
+
+# run tests with race detection
+test *FLAGS:
+    go test -race ./... {{FLAGS}}
+
+# run the linter
+lint:
+    golangci-lint run
+```
+
+### Rust
+```just
+# build in debug mode
+build *FLAGS:
+    cargo build {{FLAGS}}
+
+# run all tests
+test:
+    cargo test
+
+# check, clippy, and format
+check:
+    cargo check
+    cargo clippy -- -D warnings
+    cargo fmt --check
 ```

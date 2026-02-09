@@ -8,59 +8,23 @@ argument-hint: "<task to automate>"
 
 Add a recipe (or small group of related recipes) to the project's `justfile` based on `$ARGUMENTS`.
 
-For detailed syntax and built-in functions, see [reference.md](../../reference.md).
+See [reference.md](../../reference.md) for syntax and built-in functions.
 
 ## Workflow
 
-### 1. Read Existing Justfile
+1. **Read** — find `justfile` / `Justfile` / `.justfile`; parse structure if found.
+2. **Plan** — determine recipe name, params, commands. If an existing recipe covers this concern, suggest modifying it instead.
+3. **Insert** (justfile exists) — place recipe in correct section (settings → vars → default → grouped → private helpers). Match existing style. Add doc comment. Preserve all existing content.
+4. **Create** (no justfile) — write a minimal scaffold with `default: @just --list` plus the requested recipe. Only add settings if the recipe requires them. Suggest `/just:new` for full project-aware generation.
 
-- Look for `justfile` (or `Justfile`, `.justfile`) in the working directory
-- If found, parse its structure: settings, variables, groups, existing recipes
-- If NOT found, you will create a minimal scaffold (see below)
+## Output Rules
 
-### 2. Understand the Request
-
-- Determine what task the user wants to automate
-- Identify the appropriate recipe name, parameters, and commands
-- Check if an existing recipe already covers this concern — if so, suggest modifying it rather than duplicating
-
-### 3. Insert the Recipe
-
-When a justfile exists:
-- Place the recipe in the correct section per the ordering convention (settings → variables → default → grouped recipes → private helpers)
-- Match the existing style: quote style, attribute usage, comment style
-- If the justfile uses `[group()]`, assign an appropriate group
-- Add doc comments consistent with existing recipes
-- Add private helper recipes (prefixed with `_`) if needed
-- Preserve ALL existing content — do not reformat or restructure unrelated recipes
-
-### 4. Create Minimal Justfile (when none exists)
-
-If no justfile is found, create one with this structure:
-
-```just
-default:
-    @just --list
-
-# <doc comment for the requested recipe>
-<requested recipe>
-```
-
-Only include settings (e.g., `set shell`, `set dotenv-load`) if the recipe requires them.
-Do NOT generate a full project-aware justfile — that's what `/just:new` is for.
-
-## Output Requirements
-
-- Output the **complete justfile** with the new recipe integrated
-- Write it to `./justfile` using the Write tool
-- Include a doc comment on the new recipe
-- Use `@` prefix on echo/printf lines
-- Quote `{{…}}` substitutions containing spaces
+- Use **Edit tool** to insert — never rewrite the file (use Write only when creating a new justfile)
+- Doc comment on new recipe
+- `@` on echo/printf lines
+- Quote `{{…}}` with spaces
 
 ## Anti-patterns
 
-- Do NOT rewrite or reformat existing recipes
-- Do NOT add unrelated recipes "while you're at it"
-- Do NOT reorganize or regroup existing recipes
-- Do NOT remove or rename existing recipes
-- Do NOT generate a full project-aware justfile — suggest `/just:new` if the user needs that
+- Don't rewrite, reformat, reorganize, or remove existing recipes
+- Don't add unrelated recipes
