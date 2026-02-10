@@ -1,7 +1,7 @@
 ---
-name: new
 description: Generate well-structured justfiles with best practices. Use when creating a new justfile from scratch.
 argument-hint: "[project description or recipe needs]"
+allowed-tools: [Read, Write, Glob, Bash, AskUserQuestion]
 ---
 
 # Justfile Generator
@@ -9,7 +9,7 @@ argument-hint: "[project description or recipe needs]"
 Generate a complete, idiomatic `justfile` for the project described in `$ARGUMENTS`.
 If no arguments, analyze the current project and generate an appropriate justfile.
 
-Consult [reference.md](../../reference.md) for syntax, built-in functions, attributes, and patterns.
+Consult [reference.md](../reference.md) for syntax, built-in functions, attributes, and patterns.
 
 ## Requirements
 
