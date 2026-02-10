@@ -1,14 +1,14 @@
 ---
-name: add
 description: Add a recipe to an existing justfile, or create a minimal one if none exists. Use when automating a specific task with just.
 argument-hint: "<task to automate>"
+allowed-tools: [Read, Edit, Glob, Bash, AskUserQuestion]
 ---
 
 # Add Recipe to Justfile
 
 Add a recipe (or small group of related recipes) to the project's `justfile` based on `$ARGUMENTS`.
 
-See [reference.md](../../reference.md) for syntax and built-in functions.
+See [reference.md](../reference.md) for syntax and built-in functions.
 
 ## Workflow
 
